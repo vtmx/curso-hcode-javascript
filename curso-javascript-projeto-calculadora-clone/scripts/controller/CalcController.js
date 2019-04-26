@@ -47,28 +47,47 @@ class CalcController {
 		return (['+', '-', '*', '%', '/'].indexOf(value) > - 1)
 	}
 
+	pushOperation(value) {
+		this._operation.push(value)
+
+		if (this._operation.length > 3) {
+			this.calc()
+		}
+	}
+
+	calc() {
+		let last = this._operation.pop()
+		console.log(this._operation)
+		let result = eval(this._operation.join(''))
+		this._operation = [result, last]
+	}
+
+	getLastNumberToDisplay() {
+		
+	}
+
 	addOperation(value) {
-
-		console.log('A:', isNaN(this.getLastOperation()))
-
+		// String
 		if (isNaN(this.getLastOperation())) {
-			// String
 			if (this.isOperator(value)) {
-				// Troca o operador
 				this.setLastOperation(value)
 			} else if (isNaN(value)) {
-				// Outra coisa
-				console.log(value)
+				console.log('Outra coisa', value)
 			} else {
-				this._operation.push(value)
+				this.pushOperation(value)
 			}
+		// Number
 		} else {
-			// Number
-			let newValue = this.getLastOperation().toString() + value.toString()
-			this.setLastOperation(parseInt(newValue))
-		}
+			if (this.isOperator(value)) {
+				this.pushOperation(value)
+			} else {
+				let newValue = this.getLastOperation().toString() + value.toString()
+				this.setLastOperation(parseInt(newValue))
 
-		console.log(this._operation)
+				// Atualizar display
+				this.setLastNumberToDisplay()
+			}
+		}
 	}
 
 	setError() {
@@ -101,6 +120,8 @@ class CalcController {
 				this.addOperation('.')
 				break			 
 			case 'igual':
+				break
+			case 'ponto':
 				break
 
 			case '0':
