@@ -50,7 +50,7 @@ class CalcController {
 	pushOperation(value) {
 		this._operation.push(value)
 
-		if (this._operation.length > 3) {
+		if(this._operation.length > 3) {
 			this.calc()
 		}
 	}
@@ -60,31 +60,41 @@ class CalcController {
 		console.log(this._operation)
 		let result = eval(this._operation.join(''))
 		this._operation = [result, last]
+		this.setLastNumberToDisplay()
 	}
 
-	getLastNumberToDisplay() {
-		
+	setLastNumberToDisplay() {
+		let lastNumber
+
+		for(let i = this._operation.length; i >= 0; i--) {
+			if(!this.isOperator(this._operation[i])) {
+				lastNumber = this._operation[i]
+				break
+			}
+		}
+
+		this.displayCalc = lastNumber
 	}
 
 	addOperation(value) {
 		// String
-		if (isNaN(this.getLastOperation())) {
-			if (this.isOperator(value)) {
+		if(isNaN(this.getLastOperation())) {
+			if(this.isOperator(value)) {
 				this.setLastOperation(value)
-			} else if (isNaN(value)) {
+			} else if(isNaN(value)) {
 				console.log('Outra coisa', value)
 			} else {
 				this.pushOperation(value)
+				this.setLastNumberToDisplay()
 			}
 		// Number
 		} else {
-			if (this.isOperator(value)) {
+			if(this.isOperator(value)) {
 				this.pushOperation(value)
 			} else {
 				let newValue = this.getLastOperation().toString() + value.toString()
 				this.setLastOperation(parseInt(newValue))
 
-				// Atualizar display
 				this.setLastNumberToDisplay()
 			}
 		}
