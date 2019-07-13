@@ -20,6 +20,13 @@ v.toString() // Converte para string
 v.parseInt() // Converte para inteiro
 ```
 
+Split
+```js
+let events = 'hover, click'
+events.split(',') » ['click', ' hover']
+events.split(', ') » ['click', 'hover']
+```
+
 Métodos Array
 ```js
 array.push('iten') // Adiciona item no array ao final

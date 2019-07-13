@@ -10,18 +10,32 @@ class CalcController {
 		this.initButtonsEvents()
 	}
 
+	// Inicializa data, hora e display
 	initialize() {
 		this.setDisplayDateTime()
+		setInterval(() => this.setDisplayDateTime(), 1000)
+	}
 
-		setInterval(() => {
-			this.setDisplayDateTime()
-		}, 1000)
+	// Inicia eventos nos botões
+	initButtonsEvents() {
+		let buttons = document.querySelectorAll('#buttons > g, #parts > g')
+
+		buttons.forEach((btn, index) => {
+			this.addEventListenerAll(btn, 'click, drag', () => {
+				let classBtn = btn.className.baseVal.replace('btn-', '')
+				this.execBtn(classBtn)
+			})
+
+			this.addEventListenerAll(btn, 'mouseover, mouseup, mousedown', () => {
+				btn.style.cursor = 'pointer'
+			})
+		})
 	}
 
 	// Eventos customizados
-	addEventListenerAll(element, events, fn) {
-		events.split(' ').forEach(event => {
-			element.addEventListener(event, fn, false) // O false impede do evento se repetir consecutivamente
+	addEventListenerAll(el, e, fn) {
+		e.split(', ').forEach(e => {
+			el.addEventListener(e, fn, false) // O false impede do evento se repetir consecutivamente
 		})
 	}
 
@@ -77,27 +91,59 @@ class CalcController {
 	}
 
 	addOperation(value) {
-		// String
-		if(isNaN(this.getLastOperation())) {
+		console.log('A', value, isNaN(this.getLastOperation()))
+		
+		if(isNaN(this.getLastOperation(value))) {
+			// String
 			if(this.isOperator(value)) {
+				// Troca operador
 				this.setLastOperation(value)
-			} else if(isNaN(value)) {
-				console.log('Outra coisa', value)
+			} else if (isNaN(value)) {
+			
 			} else {
-				this.pushOperation(value)
-				this.setLastNumberToDisplay()
+				// Igual ou ponto
+				this._operation.push(value)
 			}
-		// Number
 		} else {
 			if(this.isOperator(value)) {
-				this.pushOperation(value)
+				this._operation.push(value)
 			} else {
+				// Number
 				let newValue = this.getLastOperation().toString() + value.toString()
 				this.setLastOperation(parseInt(newValue))
-
-				this.setLastNumberToDisplay()
 			}
 		}
+		
+		console.log(this._operation)
+	
+	
+	
+	
+	
+		// String
+		// if(isNaN(this.getLastOperation())) {
+		// 	if(this.isOperator(value)) {
+		// 		this.setLastOperation(value)
+		// 		console.log(value)
+		// 	} else if(isNaN(value)) {
+		// 		console.log('Outra coisa', value)
+		// 	} else {
+		// 		this.pushOperation(value)
+		// 		this.setLastNumberToDisplay()
+		// 		this.displayCalc = value
+		// 	}
+		// 	// Number
+		// } else {
+		// 	if(this.isOperator(value)) {
+		// 		this.pushOperation(value)
+		// 		console.log(value)
+		// 	} else {
+		// 		let newValue = this.getLastOperation().toString() + value.toString()
+		// 		this.setLastOperation(parseInt(newValue))
+		// 		this.setLastNumberToDisplay()
+		// 		console.log(value)
+		// 	}
+		// }
 	}
 
 	setError() {
@@ -110,6 +156,7 @@ class CalcController {
 				this.clearAll()
 				break
 			case 'ce':
+				this.clearEntry()
 				break
 			case 'soma':
 				this.addOperation('+')
@@ -126,14 +173,12 @@ class CalcController {
 			case 'porcento':
 				this.addOperation('%')
 				break
-			case '.':
+			case 'ponto':
 				this.addOperation('.')
 				break			 
 			case 'igual':
+				this.addOperation('=')
 				break
-			case 'ponto':
-				break
-
 			case '0':
 			case '1':
 			case '2':
@@ -146,26 +191,10 @@ class CalcController {
 			case '9':
 				this.addOperation(parseInt(value))
 				break
-				
 			default:
 				this.setError()
 				break			 
 		}
-	}
-
-	initButtonsEvents() {
-		let buttons = document.querySelectorAll('#buttons > g, #parts > g')
-
-		buttons.forEach((btn, index) => {
-			this.addEventListenerAll(btn, 'click drag', e => {
-				let textBtn = btn.className.baseVal.replace('btn-', '')
-				this.execBtn(textBtn)
-			})
-
-			this.addEventListenerAll(btn, 'mouseover mouseup mousedown', e => {
-				btn.style.cursor = 'pointer'
-			})
-		})
 	}
 
 	setDisplayDateTime() {
@@ -174,6 +203,7 @@ class CalcController {
 			month: 'long',
 			year: 'numeric'
 		})
+		
 		this.displayTime = this.currentDate.toLocaleTimeString(this._locale)
 	}
 
