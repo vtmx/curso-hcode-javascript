@@ -52,8 +52,8 @@ class CalcController {
 	// Apaga todo display
 	clearAll() {
 		this._operation = []
-		this._lastNumber = []
-		this._lastOperator = []
+		this._lastNumber = ''
+		this._lastOperator = ''
 		this.setLastNumberToDisplay()
 	}
 
@@ -149,9 +149,6 @@ class CalcController {
 			if(this.isOperator(value)) {
 				// Troca operador
 				this.setLastOperation(value)
-			} else if (isNaN(value)) {
-				// Igual ou ponto
-			
 			} else {
 				this.pushOperation(value)
 
@@ -164,7 +161,7 @@ class CalcController {
 			} else {
 				// Number
 				let newValue = this.getLastOperation().toString() + value.toString()
-				this.setLastOperation(parseFloat(newValue))
+				this.setLastOperation(newValue)
 
 				// Atualizar display
 				this.setLastNumberToDisplay()
@@ -179,7 +176,9 @@ class CalcController {
 	addDot() {
 		let lastOperation = this.getLastOperation()
 
-		if(this.isOperator || !lastOperation) {
+		if(typeof lastOperation === 'string' && lastOperation.split('').indexOf('.') > -1) return
+
+		if(this.isOperator(lastOperation) || !lastOperation) {
 			this.pushOperation('0.')
 		} else {
 			this.setLastOperation(lastOperation.toString() + '.')
